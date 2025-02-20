@@ -32,7 +32,7 @@ export default {
     async blockDay() {
       try {
         // Enviar o pedido para a rota de bloquear dia no backend
-        const response = await axios.post('http://localhost:3000/blockday', {
+        const response = await axios.post('https://docker-agendamento.onrender.com/blockday', {
           dia: this.date
         });
 

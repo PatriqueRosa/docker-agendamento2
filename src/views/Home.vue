@@ -1,4 +1,3 @@
-<!-- filepath: /e:/node/vueagedamento/sistema-agendamento/src/views/Home.vue -->
 <template>
   <div class="container text-center mt-5">
     <h1>Home</h1>
@@ -9,11 +8,13 @@
 
 <script>
 export default {
-  name: 'Home'
-},
-  goToCreate() {
-    this.$router.push('/create');
+  name: 'Home',
+  methods: {
+    goToCreate() {
+      this.$router.push('/create');
+    }
   }
+};
 </script>
 
 <style scoped>

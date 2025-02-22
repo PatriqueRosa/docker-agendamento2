@@ -1,4 +1,3 @@
-<!-- filepath: /e:/node/vueagedamento/sistema-agendamento/src/views/Create.vue -->
 <template>
   <div class="container mt-5">
     <h1 class="text-center">Agendar Serviço</h1>
@@ -51,12 +50,12 @@ export default {
       form: {
         nome: '',
         telefone: '',
-        title: '', // Atualize para usar o nome do serviço
+        title: '',
         dia: '',
         horario: ''
       },
-      servicos: [], // Lista de serviços
-      horariosDisponiveis: [] // Lista de horários disponíveis
+      servicos: [],
+      horariosDisponiveis: []
     }
   },
   mounted() {
@@ -72,9 +71,29 @@ export default {
       }
     },
     async fetchHorariosDisponiveis() {
+      const today = new Date();
+      const selectedDate = new Date(this.form.dia);
+
+      if (selectedDate < today.setHours(0, 0, 0, 0)) {
+        alert('Não é possível selecionar um dia passado.');
+        this.form.dia = '';
+        return;
+      }
+
       try {
         const response = await api.get(`/horarios?dia=${this.form.dia}`);
-        this.horariosDisponiveis = response.data;
+        let horarios = response.data;
+
+        if (selectedDate.toDateString() === today.toDateString()) {
+          const currentHours = today.getHours();
+          const currentMinutes = today.getMinutes();
+          horarios = horarios.filter(horario => {
+            const [hours, minutes] = horario.split(':').map(Number);
+            return hours > currentHours || (hours === currentHours && minutes > currentMinutes);
+          });
+        }
+
+        this.horariosDisponiveis = horarios;
       } catch (error) {
         console.error('Erro ao buscar horários disponíveis:', error);
       }
@@ -91,7 +110,7 @@ export default {
       try {
         const response = await api.post('/agendamentos', this.form);
         if (!existingUUID) {
-          Cookies.set('uuid', response.data.uuid, { expires: 1 }); // Salva o UUID como um cookie por 1 dia (24 horas)
+          Cookies.set('uuid', response.data.uuid, { expires: 1 });
         }
         alert(`Agendamento realizado com sucesso! Seu UUID é: ${response.data.uuid}`);
       } catch (error) {
@@ -110,7 +129,6 @@ export default {
 </script>
 
 <style scoped>
-/* Adicione estilos aqui */
 form {
   display: flex;
   flex-direction: column;
@@ -121,7 +139,7 @@ form {
 }
 
 .footer {
-  height: 3rem; /* Altura de aproximadamente três parágrafos */
+  height: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;

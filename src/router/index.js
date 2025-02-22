@@ -15,8 +15,8 @@ const routes = [
   { path: '/create', name: 'Create', component: Create },
   { path: '/manage-agendamento', name: 'ManageAgendamento', component: ManageAgendamento },
   { path: '/agendamentos', name: 'Agendamentos', component: Agendamentos },
-  { path: '/block-day', name: 'BlockDay', component: BlockDay }, // Adicionar a rota para BlockDay
-  { path: '/blocked-days', name: 'BlockedDays', component: BlockedDays } // Adicionar a rota para BlockedDays 
+  { path: '/block-day', name: 'BlockDay', component: BlockDay }, 
+  { path: '/blocked-days', name: 'BlockedDays', component: BlockedDays } 
 
 ];
 

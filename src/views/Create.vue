@@ -1,7 +1,14 @@
-<!-- filepath: /e:/node/vueagedamento/sistema-agendamento/src/views/Create.vue -->
 <template>
-  <div class="container mt-5">
-    <h1 class="text-center">Agendar Serviço</h1>
+  <div :class="['container mt-5', theme]">
+
+    <h1 class="text-center flex items-center justify-center gap-2 relative">
+      Agendar Serviço
+      <button @click="toggleTheme" class="theme-toggle">
+        <span v-if="theme === 'dark'">☀️</span>
+        <span v-else>🌙</span>
+      </button>
+    </h1>
+
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
         <form @submit.prevent="submitForm" class="mt-4">
@@ -51,18 +58,25 @@ export default {
       form: {
         nome: '',
         telefone: '',
-        title: '', // Atualize para usar o nome do serviço
+        title: '',
         dia: '',
         horario: ''
       },
-      servicos: [], // Lista de serviços
-      horariosDisponiveis: [] // Lista de horários disponíveis
+      servicos: [],
+      horariosDisponiveis: [],
+      theme: localStorage.getItem('theme') || 'light' // Define o tema salvo ou padrão claro
     }
   },
   mounted() {
     this.fetchServicos();
+    document.body.classList.toggle('dark', this.theme === 'dark'); // Aplica o tema ao carregar a página
   },
   methods: {
+    toggleTheme() {
+      this.theme = this.theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', this.theme);
+      document.body.classList.toggle('dark', this.theme === 'dark');
+    },
     async fetchServicos() {
       try {
         const response = await api.get('/servicos');
@@ -72,7 +86,6 @@ export default {
       }
     },
     async fetchHorariosDisponiveis() {
-      console.log("Data selecionada:", this.form.dia); // Verifique se o formato está correto
       try {
         const response = await api.get(`/horarios?dia=${this.form.dia}`);
         this.horariosDisponiveis = response.data;
@@ -84,15 +97,13 @@ export default {
       const existingUUID = Cookies.get('uuid');
       if (existingUUID) {
         const confirmAnother = confirm('Você já tem um agendamento, deseja realizar outro?');
-        if (!confirmAnother) {
-          return;
-        }
+        if (!confirmAnother) return;
         this.form.uuid = existingUUID;
       }
       try {
         const response = await api.post('/agendamentos', this.form);
         if (!existingUUID) {
-          Cookies.set('uuid', response.data.uuid, { expires: 1 }); // Salva o UUID como um cookie por 1 dia (24 horas)
+          Cookies.set('uuid', response.data.uuid, { expires: 1 });
         }
         alert(`Agendamento realizado com sucesso! Seu UUID é: ${response.data.uuid}`);
       } catch (error) {
@@ -111,7 +122,11 @@ export default {
 </script>
 
 <style scoped>
-/* Adicione estilos aqui */
+/* Estilos padrão */
+.container {
+  height: 100vh;
+  width: 100%;
+}
 form {
   display: flex;
   flex-direction: column;
@@ -122,11 +137,47 @@ form {
 }
 
 .footer {
-  height: 3rem; /* Altura de aproximadamente três parágrafos */
+  height: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 1px solid #ccc;
   margin-top: 2rem;
+}
+
+/* Botão de alternância de tema */
+.theme-toggle {
+  position: static; /* Removendo absolute */
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Tema escuro */
+.dark {
+  background-color: #121212;
+  color: #fff;
+}
+
+.dark .form-control, 
+.dark .form-select {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+
+.dark .btn-primary {
+  background-color: hsl(145, 95%, 76%);
+  border-color: hsl(153, 28%, 34%);
+}
+
+.dark .btn-secondary {
+  background-color: #03dac6;
+  border-color: #03dac6;
+}
+
+.dark .footer {
+  border-top: 1px solid #666;
 }
 </style>

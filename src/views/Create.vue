@@ -1,6 +1,5 @@
 <template>
-  <div :class="['container mt-5', theme]">
-
+  <div class="container mt-5">
     <h1 class="text-center flex items-center justify-center gap-2 relative">
       Agendar Serviço
       <button @click="toggleTheme" class="theme-toggle">
@@ -64,18 +63,25 @@ export default {
       },
       servicos: [],
       horariosDisponiveis: [],
-      theme: localStorage.getItem('theme') || 'light' // Define o tema salvo ou padrão claro
+      theme: localStorage.getItem('theme') || 'light'
     }
   },
   mounted() {
     this.fetchServicos();
-    document.body.classList.toggle('dark', this.theme === 'dark'); // Aplica o tema ao carregar a página
+    this.applyTheme();
   },
   methods: {
+    applyTheme() {
+      if (this.theme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+    },
     toggleTheme() {
       this.theme = this.theme === 'light' ? 'dark' : 'light';
       localStorage.setItem('theme', this.theme);
-      document.body.classList.toggle('dark', this.theme === 'dark');
+      this.applyTheme();
     },
     async fetchServicos() {
       try {
@@ -121,17 +127,40 @@ export default {
 }
 </script>
 
-<style scoped>
-/* Estilos padrão */
-.container {
-  height: 100vh;
-  width: 100%;
+<style>
+/* Estilos globais que afetam toda a aplicação */
+html.dark-theme {
+  background-color: #121212;
+  color: #fff;
+  min-height: 100%;
 }
+
+html.dark-theme body {
+  background-color: #121212;
+  color: #fff;
+  min-height: 100vh;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+</style>
+
+<style scoped>
+/* Estilos específicos do componente */
+.container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 1rem;
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border: 1px solid black;
+  border: 1px solid #ccc;
   border-radius: 10px;
   padding: 1rem;
 }
@@ -147,37 +176,35 @@ form {
 
 /* Botão de alternância de tema */
 .theme-toggle {
-  position: static; /* Removendo absolute */
   font-size: 24px;
   background: none;
   border: none;
   cursor: pointer;
 }
 
-/* Tema escuro */
-.dark {
-  background-color: #121212;
-  color: #fff;
-}
-
-.dark .form-control, 
-.dark .form-select {
+/* Estilos específicos para o tema escuro */
+:global(html.dark-theme) .form-control,
+:global(html.dark-theme) .form-select {
   background-color: #1e1e1e;
   color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #666;
 }
 
-.dark .btn-primary {
-  background-color: hsl(145, 95%, 76%);
+:global(html.dark-theme) .btn-primary {
+  background-color: hsl(145, 63%, 42%);
   border-color: hsl(153, 28%, 34%);
 }
 
-.dark .btn-secondary {
-  background-color: #03dac6;
-  border-color: #03dac6;
+:global(html.dark-theme) .btn-secondary {
+  background-color: #121212;
+  border-color: #1a7a7a;
 }
 
-.dark .footer {
+:global(html.dark-theme) form {
+  border-color: #666;
+}
+
+:global(html.dark-theme) .footer {
   border-top: 1px solid #666;
 }
 </style>

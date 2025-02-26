@@ -12,6 +12,7 @@
           <p v-if="message" class="mt-3">{{ message }}</p>
         </form>
         <button @click="goToBlockedDays" class="btn btn-secondary w-100 mt-3">Ver Dias Bloqueados</button>
+        <button @click="goToCalendar" class="btn btn-secondary w-100 mt-3">Voltar para o Calendário</button>
       </div>
     </div>
   </div>
@@ -49,6 +50,9 @@ export default {
     },
     goToBlockedDays() {
       this.$router.push('/blocked-days');
+    },
+    goToCalendar() {
+      this.$router.push('/calendar');
     }
   }
 };

@@ -29,7 +29,7 @@ tema dark ta legal aqui porem não esconde horários passados
           </div>
           <div class="mb-3">
             <label for="dia" class="form-label">Dia:</label>
-            <input type="date" id="dia" v-model="form.dia" @change="fetchHorariosDisponiveis" class="form-control" :min="minDate" required />
+            <input type="date" id="dia" v-model="form.dia" @change="fetchHorariosDisponiveis" class="form-control" required />
           </div>
           <div class="mb-3">
             <label for="horario" class="form-label">Horário:</label>
@@ -65,8 +65,7 @@ export default {
       },
       servicos: [],
       horariosDisponiveis: [],
-      theme: localStorage.getItem('theme') || 'light',
-      minDate: new Date().toISOString().split('T')[0]
+      theme: localStorage.getItem('theme') || 'light'
     }
   },
   mounted() {
@@ -95,37 +94,11 @@ export default {
       }
     },
     async fetchHorariosDisponiveis() {
-      // Se não tiver data selecionada, não faz nada
-      if (!this.form.dia) return;
-      
-      // Verifica se a data selecionada é anterior à data atual
-      const hoje = new Date().toISOString().split('T')[0];
-      if (this.form.dia < hoje) {
-        alert('Não é possível agendar em dias anteriores à data atual.');
-        this.form.dia = hoje; // Reset para a data atual
-        this.horariosDisponiveis = [];
-        return;
-      }
-      
       try {
         const response = await api.get(`/horarios?dia=${this.form.dia}`);
         this.horariosDisponiveis = response.data;
-        
-        // Se não houver horários disponíveis, informa o usuário
-        if (this.horariosDisponiveis.length === 0) {
-          alert('Não há horários disponíveis para esta data.');
-        }
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          alert(error.response.data.message || 'Data inválida para agendamento.');
-          this.form.dia = hoje; // Reset para a data atual
-        } else if (error.response && error.response.status === 403) {
-          alert('Este dia não está disponível para agendamentos.');
-        } else {
-          console.error('Erro ao buscar horários disponíveis:', error);
-          alert('Ocorreu um erro ao buscar horários disponíveis.');
-        }
-        this.horariosDisponiveis = [];
+        console.error('Erro ao buscar horários disponíveis:', error);
       }
     },
     async submitForm() {
@@ -141,7 +114,6 @@ export default {
           Cookies.set('uuid', response.data.uuid, { expires: 1 });
         }
         alert(`Agendamento realizado com sucesso! Seu UUID é: ${response.data.uuid}`);
-        window.location.reload();
       } catch (error) {
         if (error.response && error.response.status === 400 && error.response.data.message === 'Este dia foi bloqueado pelo admin.') {
           alert('Este dia foi bloqueado pelo admin.');

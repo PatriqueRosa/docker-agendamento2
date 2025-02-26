@@ -1,6 +1,7 @@
 <!-- filepath: /e:/node/vueagedamento/sistema-agendamento/src/views/ManageAgendamento.vue -->
 <template>
   <div class="container mt-5">
+    <button @click="goToCreate" class="btn btn-primary mt-3">Voltar</button>
     <h1 class="text-center">Gerenciar Agendamento</h1>
     <div v-if="agendamentos.length" class="mt-4">
       <h2>Detalhes dos Agendamentos</h2>
@@ -65,6 +66,9 @@ export default {
       } catch (error) {
         console.error('Erro ao excluir agendamento:', error);
       }
+    },
+    goToCreate() {
+      this.$router.push('/create');
     }
   }
 }

@@ -12,13 +12,6 @@
       <div class="col-md-8 col-lg-6">
         <form @submit.prevent="submitForm" class="mt-4">
           <div class="mb-3">
-            <label for="profissionalSelect" class="form-label">Profissional:</label>
-            <select id="profissionalSelect" v-model="form.profissional" class="form-select" required>
-              <option value="profissional1">Profissional 1</option>
-              <option value="profissional2">Profissional 2</option>
-            </select>
-          </div>
-          <div class="mb-3">
             <label for="nome" class="form-label">Nome:</label>
             <input type="text" id="nome" v-model="form.nome" class="form-control" required />
           </div>
@@ -52,7 +45,6 @@
           <button type="submit" class="btn btn-primary w-100">Agendar</button>
         </form>
         <button @click="goToManageAgendamento" class="btn btn-secondary w-100 mt-3">Gerenciar Agendamento</button>
-        <!-- Novo botão para WhatsApp -->
         <a :href="whatsappLink" target="_blank" class="btn btn-success w-100 mt-3">
           Falar no WhatsApp
         </a>
@@ -77,8 +69,7 @@ export default {
         telefone: '',
         title: '',
         dia: '',
-        horario: '',
-        profissional: ''
+        horario: ''
       },
       servicos: [],
       horariosDisponiveis: [],
@@ -89,7 +80,6 @@ export default {
   mounted() {
     this.fetchServicos();
     this.applyTheme();
-    this.getProfissionalFromRoute();
   },
   computed: {
     whatsappLink() {
@@ -100,12 +90,6 @@ export default {
     }
   },
   methods: {
-    getProfissionalFromRoute() {
-      this.form.profissional = this.$route.query.profissional;
-      if (!this.form.profissional) {
-        this.form.profissional = 'profissional1';
-      }
-    },
     applyTheme() {
       if (this.theme === 'dark') {
         document.documentElement.classList.add('dark-theme');
@@ -127,32 +111,30 @@ export default {
       }
     },
     async fetchHorariosDisponiveis() {
-      if (!this.form.dia || !this.form.profissional) return;
+      // Se não tiver data selecionada, não faz nada
+      if (!this.form.dia) return;
 
+      // Verifica se a data selecionada é anterior à data atual
       const hoje = new Date().toISOString().split('T')[0];
       if (this.form.dia < hoje) {
         alert('Não é possível agendar em dias anteriores à data atual.');
-        this.form.dia = hoje;
+        this.form.dia = hoje; // Reset para a data atual
         this.horariosDisponiveis = [];
         return;
       }
 
       try {
-        const response = await api.get('/horarios', {
-          params: {
-            dia: this.form.dia,
-            profissional: this.form.profissional
-          }
-        });
+        const response = await api.get(`/horarios?dia=${this.form.dia}`);
         this.horariosDisponiveis = response.data;
 
+        // Se não houver horários disponíveis, informa o usuário
         if (this.horariosDisponiveis.length === 0) {
           alert('Não há horários disponíveis para esta data.');
         }
       } catch (error) {
         if (error.response && error.response.status === 400) {
           alert(error.response.data.message || 'Data inválida para agendamento.');
-          this.form.dia = hoje;
+          this.form.dia = hoje; // Reset para a data atual
         } else if (error.response && error.response.status === 403) {
           alert('Este dia não está disponível para agendamentos.');
         } else {
@@ -169,10 +151,6 @@ export default {
         if (!confirmAnother) return;
         this.form.uuid = existingUUID;
       }
-      if (!this.form.profissional) {
-        alert('Por favor, selecione um profissional.');
-        return;
-      }
       try {
         const response = await api.post('/agendamentos', this.form);
         if (!existingUUID) {
@@ -181,8 +159,8 @@ export default {
         alert(`Agendamento realizado com sucesso!`);
         window.location.reload();
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          alert(error.response.data.message || 'Erro ao agendar');
+        if (error.response && error.response.status === 400 && error.response.data.message === 'Este dia foi bloqueado pelo admin.') {
+          alert('Este dia foi bloqueado pelo admin.');
         } else {
           console.error('Erro ao realizar agendamento:', error);
         }
@@ -193,9 +171,12 @@ export default {
     },
     formatPhone() {
       let phone = this.form.telefone;
-      if (!phone.startsWith('+5515')) {
-        this.form.telefone = '+5515' + phone;
-      }
+        // Verifica se o número já começa com +5515
+        if (!phone.startsWith('+5515')) {
+            // Se não começar, adiciona +5515 no início
+            this.form.telefone = '+5515' + phone;
+        }
+      
     }
   }
 }
@@ -215,8 +196,7 @@ html.dark-theme body {
   min-height: 100vh;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -273,16 +253,6 @@ form {
 :global(html.dark-theme) .btn-secondary {
   background-color: #121212;
   border-color: #1a7a7a;
-}
-
-:global(html.dark-theme) .btn-success {
-  background-color: #28a745; /* Cor verde padrão para o botão de sucesso */
-  border-color: #218838; /* Um verde mais escuro para a borda */
-}
-
-:global(html.dark-theme) .btn-success:hover {
-  background-color: #218838; /* Verde mais escuro no hover */
-  border-color: #1e7e34; /* Borda mais escura no hover */
 }
 
 :global(html.dark-theme) form {

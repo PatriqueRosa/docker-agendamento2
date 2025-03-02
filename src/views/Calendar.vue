@@ -318,4 +318,12 @@ export default {
 :global(html.dark-theme) .hamburger-btn span {
   background-color: #fff;
 }
+
+.fc-media-screen{
+  background-color: #fff;
+  border: 1px solid black;;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 </style>

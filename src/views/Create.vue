@@ -1,12 +1,14 @@
 <template>
   <div class="container mt-5">
-    <h1 class="text-center flex items-center justify-center gap-2 relative">
-      Agendar Serviço
-      <button @click="toggleTheme" class="theme-toggle">
-        <span v-if="theme === 'dark'">☀️</span>
-        <span v-else>🌙</span>
-      </button>
-    </h1>
+
+    <img 
+      :src="theme === 'dark' ? logoDark : logoLight" 
+      alt="Logo" 
+      class="logo-img" 
+      @click="toggleTheme"
+      :title="theme === 'dark' ? 'Clique para mudar para tema claro' : 'Clique para mudar para tema escuro'"
+      style="cursor: pointer;"
+    />
 
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
@@ -59,6 +61,8 @@
 <script>
 import api from '@/services/api.ts'
 import Cookies from 'js-cookie'
+import logoDark from '../../public/logoFundoPreto.png'
+import logoLight from '../../public/logoFio.jpeg'
 
 export default {
   name: 'Create',
@@ -74,7 +78,9 @@ export default {
       servicos: [],
       horariosDisponiveis: [],
       theme: localStorage.getItem('theme') || 'light',
-      minDate: new Date().toISOString().split('T')[0]
+      minDate: new Date().toISOString().split('T')[0],
+      logoDark, 
+      logoLight
     }
   },
   mounted() {
@@ -83,7 +89,7 @@ export default {
   },
   computed: {
     whatsappLink() {
-      const phoneNumber = '+5515996217442';
+      const phoneNumber = '+551599684-3267';
       const message = 'Olá, gostaria de mais informações sobre o agendamento.';
       const encodedMessage = encodeURIComponent(message);
       return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -236,6 +242,31 @@ form {
   border: none;
   cursor: pointer;
 }
+
+/* Imagem do logo */
+.logo-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* Limites de tamanho para evitar que a imagem fique muito grande em telas maiores */
+@media (min-width: 768px) {
+  .logo-img {
+    max-width: 70%;
+  }
+}
+
+@media (min-width: 992px) {
+  .logo-img {
+    max-width: 50%;
+  }
+}
+
+
 
 /* Estilos específicos para o tema escuro */
 :global(html.dark-theme) .form-control,

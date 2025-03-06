@@ -53,7 +53,7 @@ export default {
         initialView: 'timeGridWeek',
         locale: ptBrLocale,
         slotMinTime: "08:00:00", // Hora mínima
-        slotMaxTime: "23:00:00", // Hora máxima
+        slotMaxTime: "20:00:00", // Hora máxima
         slotDuration: '00:30:00', // Intervalo de 30 minutos
         navLinks: true,
         selectable: true,

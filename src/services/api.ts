@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://docker-agendamento.onrender.com' // 
+  baseURL: 'http://69.62.100.200:3000' 
 });
 
 // Adicionar um interceptor para incluir o token JWT no cabeçalho das requisições

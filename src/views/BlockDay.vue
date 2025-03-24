@@ -38,7 +38,7 @@ export default {
         });
 
         // Exibir mensagem de sucesso ou falha
-        this.message = response.data.message;s
+        this.message = response.data.message;
         if (response.data.blocked) {
           this.isBlocked = true;
         }

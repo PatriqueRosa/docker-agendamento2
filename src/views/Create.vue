@@ -178,9 +178,9 @@ export default {
     formatPhone() {
       let phone = this.form.telefone;
         // Verifica se o número já começa com +5515
-        if (!phone.startsWith('+5515')) {
+        if (!phone.startsWith('+55')) {
             // Se não começar, adiciona +5515 no início
-            this.form.telefone = '+5515' + phone;
+            this.form.telefone = '+55' + phone;
         }
       
     }

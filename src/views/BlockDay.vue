@@ -33,12 +33,12 @@ export default {
     async blockDay() {
       try {
         // Enviar o pedido para a rota de bloquear dia no backend
-        const response = await axios.post('https://docker-agendamento.onrender.com/blockday', {
+        const response = await axios.post('https://api.jkstudios.top/blockday', {
           dia: this.date
         });
 
         // Exibir mensagem de sucesso ou falha
-        this.message = response.data.message;
+        this.message = response.data.message;s
         if (response.data.blocked) {
           this.isBlocked = true;
         }
